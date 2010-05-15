@@ -1,0 +1,60 @@
+DMIPATH=/sys/class/dmi/id
+
+dellmini_info()
+{
+	# common for all Eee PC models
+	[ -c /dev/fb0 ] || FB0DEV=i915
+	EXTMOD="psmouse eeepc-laptop"
+	PREDEV=snd-hda-codec-realtek cp210x
+	SNDDEV=snd-hda-intel
+	CAMDEV=uvcvideo
+
+	board=`cat $DMIPATH/product_name`
+	case "$board" in
+		*910*)
+			echo "Dell Mini 9 (Inspiron 910)"
+			LANDEV=r8169
+			WIFDEV=wl
+			FB0DEV=
+			UVESA_MODE=${UVESA_MODE:-1024x600}
+			;;
+		*1010*)
+			echo "Dell Mini 10 (Inspiron 1010)"
+			LANDEV=r8169
+			WIFDEV=wl
+			FB0DEV=
+			UVESA_MODE=${UVESA_MODE:-1024x576}
+			;;
+		*1011*)
+			echo "Dell Mini 10V (Inspiron 1011)"
+			LANDEV=r8169
+			WIFDEV=wl
+			FB0DEV=
+			UVESA_MODE=${UVESA_MODE:-1024x576}
+			;;
+		*1012*)
+			echo "Dell Mini 10 (Inspiron 1012)"
+			LANDEV=r8169
+			WIFDEV=wl
+			FB0DEV=
+			UVESA_MODE=${UVESA_MODE:-1024x576}
+			;;
+		*)
+			echo "Unknown Dell='$board'"
+			LANDEV=r8169
+			WIFDEV=wl
+			;;
+	esac
+}
+
+detect_hardware()
+{
+	case "`cat $DMIPATH/uevent`" in
+		*Dell*)
+			dellmini_info
+			;;
+		*)
+			error WARNING: Not a Dell product
+			;;
+	esac
+}
